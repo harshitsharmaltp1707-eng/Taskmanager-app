@@ -29,7 +29,7 @@ A modern Task Management System built using Laravel (backend) and React (fronten
 * User Registration & Login
 * Protected routes (only logged-in users)
 
-### 🧑‍🤝‍🧑 User Roles
+###  User Roles
 
 * **Admin**
 
@@ -40,7 +40,7 @@ A modern Task Management System built using Laravel (backend) and React (fronten
   * Create tasks
   * Manage only their own tasks
 
-### 📋 Task Management
+###  Task Management
 
 * Create, Read, Update, Delete tasks
 * Fields:
@@ -51,20 +51,20 @@ A modern Task Management System built using Laravel (backend) and React (fronten
   * Deadline
   * Status (Pending / Completed)
 
-### 📎 File Upload
+###  File Upload
 
 * Attach one file per task
 * Supported formats: PDF, JPG, PNG
 * Max size: 2MB
 
-### 🔍 Filtering
+###  Filtering
 
 * Filter tasks by:
 
   * Status
   * Priority
 
-### 📊 Dashboard
+###  Dashboard
 
 * Total tasks
 * Completed tasks
@@ -73,7 +73,7 @@ A modern Task Management System built using Laravel (backend) and React (fronten
 
 ---
 
-## ⚙️ Installation & Setup
+##  Installation & Setup
 
 ### 1. Clone the repository
 
