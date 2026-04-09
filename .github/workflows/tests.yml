@@ -2,17 +2,9 @@ name: tests
 
 on:
   push:
-    branches:
-      - develop
-      - main
-      - master
-      - workos
+    branches: [main, develop]
   pull_request:
-    branches:
-      - develop
-      - main
-      - master
-      - workos
+    branches: [main, develop]
 
 jobs:
   ci:
@@ -23,22 +15,6 @@ jobs:
       matrix:
         php: [8.4, 8.5]
 
-    services:
-      mysql:
-        image: mysql:8
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test_db
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -47,50 +23,36 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: sqlite
           tools: composer:v2
-          coverage: none
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: 22
 
       - name: Install Node Dependencies
         run: npm install
 
       - name: Install PHP Dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+        run: composer install --no-interaction --prefer-dist
 
-      # ✅ Setup Laravel environment
-      - name: Configure Environment
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Generate key
+        run: php artisan key:generate
+
+      - name: Prepare SQLite database
         run: |
-          cp .env.example .env
-          php artisan key:generate
+          mkdir -p database
+          touch database/database.sqlite
 
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=test_db" >> .env
-          echo "DB_USERNAME=user" >> .env
-          echo "DB_PASSWORD=password" >> .env
-
-      # ✅ Wait for MySQL to be ready
-      - name: Wait for MySQL
-        run: |
-          for i in {1..10}; do
-            nc -z 127.0.0.1 3306 && echo "MySQL is up!" && break
-            echo "Waiting for MySQL..."
-            sleep 3
-          done
-
-      # ✅ Run migrations
-      - name: Run Migrations
+      - name: Run migrations
         run: php artisan migrate --force
 
-      # ✅ Build frontend (if needed)
-      - name: Build Assets
+      - name: Build assets
         run: npm run build
 
-      # ✅ Run tests
-      - name: Run Tests
+      - name: Run tests
         run: php artisan test
