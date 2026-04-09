@@ -16,11 +16,21 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.4
-          extensions: mbstring, bcmath, pdo, mysql
+          extensions: mbstring, bcmath, pdo, sqlite
           coverage: none
 
       - name: Copy .env
         run: cp .env.example .env
+
+      - name: Create SQLite DB
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+
+      - name: Update ENV for SQLite
+        run: |
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=database/database.sqlite" >> .env
 
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist
