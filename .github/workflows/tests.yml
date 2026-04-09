@@ -2,18 +2,17 @@ name: tests
 
 on:
   push:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
 
 jobs:
   ci:
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        php: [8.4, 8.5]
 
     steps:
       - name: Checkout code
@@ -22,8 +21,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          extensions: sqlite
+          php-version: 8.3
           tools: composer:v2
 
       - name: Install Dependencies
@@ -32,23 +30,8 @@ jobs:
       - name: Copy .env
         run: cp .env.example .env
 
-      - name: Generate key
+      - name: Generate App Key
         run: php artisan key:generate
 
-      # ✅ FORCE SQLITE CONFIG
-      - name: Set testing environment
-        run: |
-          echo "DB_CONNECTION=sqlite" >> .env
-          echo "DB_DATABASE=$(pwd)/database/database.sqlite" >> .env
-
-      - name: Create SQLite DB
-        run: |
-          mkdir -p database
-          touch database/database.sqlite
-
-      # ✅ THIS IS THE MOST IMPORTANT LINE
-      - name: Run migrations
-        run: php artisan migrate:fresh --seed --force
-
-      - name: Run tests
+      - name: Run Tests
         run: php artisan test
