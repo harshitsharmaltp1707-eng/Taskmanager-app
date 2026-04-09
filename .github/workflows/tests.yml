@@ -17,11 +17,25 @@ jobs:
           extensions: mbstring, pdo, sqlite, pdo_sqlite
           coverage: none
 
+      # ✅ ADD THIS (Node setup)
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
       - name: Copy .env
         run: cp .env.example .env
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist --ignore-platform-reqs
+
+      # ✅ ADD THIS (frontend deps)
+      - name: Install Node dependencies
+        run: npm install
+
+      # ✅ ADD THIS (build Vite → creates manifest.json)
+      - name: Build assets
+        run: npm run build
 
       - name: Generate key
         run: php artisan key:generate
