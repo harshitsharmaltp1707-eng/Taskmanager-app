@@ -10,6 +10,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ✅ PHP setup
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -17,35 +18,36 @@ jobs:
           extensions: mbstring, pdo, sqlite, pdo_sqlite
           coverage: none
 
-      # ✅ ADD THIS (Node setup)
+      # ✅ FIX: Use Node 20 (required by Vite)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
+      # ✅ Laravel setup
       - name: Copy .env
         run: cp .env.example .env
 
-      - name: Install dependencies
+      - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --ignore-platform-reqs
 
-      # ✅ ADD THIS (frontend deps)
+      # ✅ Build frontend (FIX for manifest.json error)
       - name: Install Node dependencies
         run: npm install
 
-      # ✅ ADD THIS (build Vite → creates manifest.json)
-      - name: Build assets
+      - name: Build Vite assets
         run: npm run build
 
-      - name: Generate key
+      - name: Generate app key
         run: php artisan key:generate
 
+      # ✅ SQLite DB setup
       - name: Setup database
-        run: |
-          touch database/database.sqlite
+        run: touch database/database.sqlite
 
       - name: Run migrations
         run: php artisan migrate --force
 
+      # ✅ Run tests
       - name: Run tests
         run: php artisan test
