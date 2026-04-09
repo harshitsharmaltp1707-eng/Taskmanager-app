@@ -1,17 +1,11 @@
-name: tests
+name: Laravel Tests
 
 on:
   push:
-    branches:
-      - main
-      - develop
   pull_request:
-    branches:
-      - main
-      - develop
 
 jobs:
-  ci:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,17 +15,21 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
-          tools: composer:v2
-
-      - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist
+          php-version: 8.4
+          extensions: mbstring, bcmath, pdo, mysql
+          coverage: none
 
       - name: Copy .env
         run: cp .env.example .env
 
+      - name: Install Dependencies
+        run: composer install --no-interaction --prefer-dist
+
       - name: Generate App Key
         run: php artisan key:generate
+
+      - name: Run Migrations
+        run: php artisan migrate --force
 
       - name: Run Tests
         run: php artisan test
