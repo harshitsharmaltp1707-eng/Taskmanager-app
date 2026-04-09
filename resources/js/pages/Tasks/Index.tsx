@@ -77,13 +77,17 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
 
     useEffect(() => {
         if (flash?.success) {
-            setToastMessage(flash.success);
-            setToastType('success');
-            setShowToast(true);
+            setTimeout(() => {
+                setToastMessage(flash.success!);
+                setToastType('success');
+                setShowToast(true);
+            }, 0);
         } else if (flash?.error) {
-            setToastMessage(flash.error);
-            setToastType('error');
-            setShowToast(true);
+            setTimeout(() => {
+                setToastMessage(flash.error!);
+                setToastType('error');
+                setShowToast(true);
+            }, 0);
         }
     }, [flash]);
 

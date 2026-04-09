@@ -10,8 +10,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-declare function route(name: string, params?: any): string;
-
 interface List {
     id: number;
     title: string;
@@ -49,9 +47,11 @@ export default function ListsIndex({ lists, flash }: Props) {
     // Handle Flash Messages
     useEffect(() => {
         if (flash?.success || flash?.error) {
-            setToastMessage(flash.success || flash.error || '');
-            setToastType(flash.success ? 'success' : 'error');
-            setShowToast(true);
+            setTimeout(() => {
+                setToastMessage(flash.success || flash.error || '');
+                setToastType(flash.success ? 'success' : 'error');
+                setShowToast(true);
+            }, 0);
         }
     }, [flash]);
 

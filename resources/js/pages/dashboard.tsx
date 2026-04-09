@@ -5,8 +5,6 @@ import { List, CheckCircle, Clock, AlertCircle, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-declare function route(name: string, params?: any): string;
-
 interface Props {
     stats?: {
         totalLists: number;
