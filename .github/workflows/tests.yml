@@ -1,8 +1,6 @@
 name: Laravel Tests
 
-on:
-  push:
-  pull_request:
+on: [push]
 
 jobs:
   test:
@@ -16,30 +14,24 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.4
-          extensions: mbstring, bcmath, pdo, sqlite
+          extensions: mbstring, pdo, sqlite, pdo_sqlite
           coverage: none
 
       - name: Copy .env
         run: cp .env.example .env
 
-      - name: Create SQLite DB
-        run: |
-          mkdir -p database
-          touch database/database.sqlite
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --ignore-platform-reqs
 
-      - name: Update ENV for SQLite
-        run: |
-          echo "DB_CONNECTION=sqlite" >> .env
-          echo "DB_DATABASE=database/database.sqlite" >> .env
-
-      - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist
-
-      - name: Generate App Key
+      - name: Generate key
         run: php artisan key:generate
 
-      - name: Run Migrations
+      - name: Setup database
+        run: |
+          touch database/database.sqlite
+
+      - name: Run migrations
         run: php artisan migrate --force
 
-      - name: Run Tests
+      - name: Run tests
         run: php artisan test
